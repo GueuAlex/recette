@@ -48,6 +48,7 @@ export function RecipeDetail() {
   return (
     <AnimatePresence>
       <motion.div
+        key="recipe-detail-backdrop"
         className="fixed inset-0 bg-black/50 z-50"
         variants={fade}
         initial="hidden"
@@ -56,6 +57,7 @@ export function RecipeDetail() {
         onClick={closeOverlay}
       />
       <motion.div
+        key="recipe-detail-sheet"
         className="fixed inset-x-0 bottom-0 top-12 bg-cream rounded-t-[26px] z-50 overflow-hidden flex flex-col"
         variants={sheetUp}
         initial="hidden"

@@ -55,6 +55,7 @@ export function FilterSheet({ isOpen, onClose, filters, onFilterChange, resultCo
       {isOpen && (
         <>
           <motion.div
+            key="filter-backdrop"
             className="fixed inset-0 bg-black/45 z-50"
             variants={fade}
             initial="hidden"
@@ -63,6 +64,7 @@ export function FilterSheet({ isOpen, onClose, filters, onFilterChange, resultCo
             onClick={onClose}
           />
           <motion.div
+            key="filter-sheet"
             className="fixed bottom-0 left-0 right-0 bg-white rounded-t-[26px] max-h-[84vh] overflow-y-auto z-50"
             variants={sheetUp}
             initial="hidden"
