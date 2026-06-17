@@ -1,6 +1,9 @@
 import type { Metadata, Viewport } from 'next';
 import { Playfair_Display, Inter } from 'next/font/google';
 import { BottomTabBar } from '@/components/layout/BottomTabBar';
+import { RecipeDetail } from '@/components/recipe/RecipeDetail';
+import { CookingMode } from '@/components/recipe/CookingMode';
+import { SearchOverlay } from '@/components/search/SearchOverlay';
 import './globals.css';
 
 const playfair = Playfair_Display({
@@ -37,6 +40,9 @@ export default function RootLayout({
     <html lang="fr" className={`${playfair.variable} ${inter.variable}`}>
       <body className="font-inter bg-cream min-h-screen pb-[78px]">
         {children}
+        <RecipeDetail />
+        <CookingMode />
+        <SearchOverlay />
         <BottomTabBar />
       </body>
     </html>
