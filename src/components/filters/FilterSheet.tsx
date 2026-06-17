@@ -65,7 +65,7 @@ export function FilterSheet({ isOpen, onClose, filters, onFilterChange, resultCo
           />
           <motion.div
             key="filter-sheet"
-            className="fixed bottom-0 left-0 right-0 bg-white rounded-t-[26px] max-h-[84vh] overflow-y-auto z-50"
+            className="fixed bottom-0 left-0 right-0 bg-white rounded-t-[8px] max-h-[84vh] overflow-y-auto z-50"
             variants={sheetUp}
             initial="hidden"
             animate="visible"

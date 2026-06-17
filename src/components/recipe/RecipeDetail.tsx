@@ -58,7 +58,7 @@ export function RecipeDetail() {
       />
       <motion.div
         key="recipe-detail-sheet"
-        className="fixed inset-x-0 bottom-0 top-12 bg-cream rounded-t-[26px] z-50 overflow-hidden flex flex-col"
+        className="fixed inset-0 bg-cream z-50 overflow-hidden flex flex-col"
         variants={sheetUp}
         initial="hidden"
         animate="visible"
