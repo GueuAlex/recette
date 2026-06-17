@@ -95,8 +95,8 @@ export default function PreferencesPage() {
       {/* About */}
       <div className="bg-white rounded-[18px] shadow-card mt-4 p-4">
         <p className="text-[13px] text-muted leading-relaxed">
-          <strong className="text-ink">La Grande Table d'Afrique de l'Ouest</strong> — 304 recettes
-          authentiques du livre "Secrets de Cuisine" par Black Amani Studios.
+          <strong className="text-ink">La Grande Table d&apos;Afrique de l&apos;Ouest</strong> — 304 recettes
+          authentiques du livre &quot;Secrets de Cuisine&quot; par Black Amani Studios.
         </p>
         <p className="text-[11px] text-faint mt-3">
           Version 1.0 · Black Amani Studios

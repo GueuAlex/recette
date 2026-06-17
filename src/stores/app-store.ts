@@ -60,7 +60,7 @@ const MILESTONE_COUNTS = [5, 10, 25, 50, 100];
 
 export const useAppStore = create<AppState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       // Initial state
       favorites: [],
       cooked: [],

@@ -245,7 +245,7 @@ export function SearchOverlay() {
                 Aucune recette trouvée
               </p>
               <p className="text-[13px] text-muted mt-2">
-                Essaie d'autres mots-clés ou ingrédients.
+                Essaie d&apos;autres mots-clés ou ingrédients.
               </p>
             </div>
           )}

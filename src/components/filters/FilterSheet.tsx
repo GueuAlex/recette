@@ -1,7 +1,6 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { X } from 'lucide-react';
 import { sheetUp, fade } from '@/lib/animations';
 import { CATEGORIES } from '@/lib/recipes';
 

@@ -2,7 +2,6 @@
 
 import { Search, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { RecipeCard } from '@/components/recipe/RecipeCard';
 import { useAppStore } from '@/stores/app-store';
 import {
   getRecipeOfDay,
@@ -34,7 +33,7 @@ export default function HomePage() {
               La Grande Table
             </h1>
             <p className="text-[11px] text-muted font-medium mt-0.5">
-              Bonjour, qu'est-ce qu'on cuisine ?
+              Bonjour, qu&apos;est-ce qu&apos;on cuisine ?
             </p>
           </div>
         </div>
@@ -71,7 +70,7 @@ export default function HomePage() {
               🍲 {CATEGORIES.find(c => c.slug === recipeOfDay.category)?.label.split(' ')[0]}
             </div>
             <div className="absolute top-[14px] right-[14px] bg-white/90 text-forest px-[12px] py-[6px] rounded-full text-[11px] font-bold">
-              Aujourd'hui
+              Aujourd&apos;hui
             </div>
             <div className="absolute left-[18px] right-[18px] bottom-[16px]">
               <h2 className="font-playfair font-extrabold text-[27px] text-white leading-tight">

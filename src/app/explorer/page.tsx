@@ -146,7 +146,7 @@ function ExplorerContent() {
             Aucune recette ne correspond
           </p>
           <p className="text-[13px] text-muted mt-2">
-            Essaie d'elargir tes filtres.
+            Essaie d&apos;elargir tes filtres.
           </p>
         </div>
       )}
