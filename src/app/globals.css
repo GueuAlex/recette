@@ -43,7 +43,7 @@
   --color-danger: var(--danger);
 
   /* Font Families */
-  --font-playfair: 'Playfair Display', serif;
+  --font-playfair: 'Lora', serif;
   --font-inter: 'Inter', system-ui, sans-serif;
 
   /* Box Shadows */

@@ -1,13 +1,14 @@
 import type { Metadata, Viewport } from 'next';
-import { Playfair_Display, Inter } from 'next/font/google';
+import { Lora, Inter } from 'next/font/google';
 import { BottomTabBar } from '@/components/layout/BottomTabBar';
 import { Overlays } from '@/components/layout/Overlays';
 import './globals.css';
 
-const playfair = Playfair_Display({
+const lora = Lora({
   subsets: ['latin'],
   variable: '--font-playfair',
   display: 'swap',
+  weight: ['400', '500', '600', '700'],
 });
 
 const inter = Inter({
@@ -35,7 +36,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fr" className={`${playfair.variable} ${inter.variable}`}>
+    <html lang="fr" className={`${lora.variable} ${inter.variable}`}>
       <body className="font-inter bg-cream min-h-screen pb-[78px]">
         {children}
         <Overlays />
