@@ -16,8 +16,6 @@ export function SearchOverlay() {
     addToHistory,
     openRecipe,
     triggerSurprise,
-    hideSurprise,
-    showSurprise,
   } = useAppStore();
 
   const [query, setQuery] = useState('');
@@ -61,12 +59,6 @@ export function SearchOverlay() {
 
   const handleSurprise = () => {
     triggerSurprise();
-    setTimeout(() => {
-      hideSurprise();
-      const randomRecipe = RECIPES[Math.floor(Math.random() * RECIPES.length)];
-      closeOverlay();
-      openRecipe(randomRecipe.id);
-    }, 850);
   };
 
   const commonIngredients = [
@@ -85,6 +77,7 @@ export function SearchOverlay() {
   return (
     <AnimatePresence>
       <motion.div
+        key="search-overlay"
         className="fixed inset-0 bg-cream z-50 flex flex-col"
         variants={fade}
         initial="hidden"
@@ -250,29 +243,6 @@ export function SearchOverlay() {
             </div>
           )}
         </div>
-
-        {/* Surprise animation overlay */}
-        <AnimatePresence>
-          {showSurprise && (
-            <motion.div
-              className="fixed inset-0 bg-ink/90 z-60 flex items-center justify-center"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              <motion.div
-                animate={{
-                  scale: [1, 1.2, 1, 1.2, 1],
-                  rotate: [0, -5, 5, -5, 0],
-                }}
-                transition={{ duration: 0.8 }}
-                className="text-[120px]"
-              >
-                🍲
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </motion.div>
     </AnimatePresence>
   );
