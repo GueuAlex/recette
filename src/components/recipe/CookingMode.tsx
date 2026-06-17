@@ -56,6 +56,7 @@ export function CookingMode() {
   return (
     <AnimatePresence>
       <motion.div
+        key="cooking-mode-overlay"
         className="fixed inset-0 bg-ink z-50 flex flex-col"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
