@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { SlidersHorizontal, X } from 'lucide-react';
 import { RecipeCard } from '@/components/recipe/RecipeCard';
 import { FilterSheet } from '@/components/filters/FilterSheet';
+import { ExplorerSkeleton } from '@/components/ui/LoadingSkeleton';
 import { RECIPES, CATEGORIES } from '@/lib/recipes';
 
 interface Filters {
@@ -164,7 +165,7 @@ function ExplorerContent() {
 
 export default function ExplorerPage() {
   return (
-    <Suspense fallback={<div className="p-5">Chargement...</div>}>
+    <Suspense fallback={<ExplorerSkeleton />}>
       <ExplorerContent />
     </Suspense>
   );
