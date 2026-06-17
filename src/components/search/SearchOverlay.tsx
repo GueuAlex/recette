@@ -9,8 +9,15 @@ import { normalizeSearch, getAccentColor, foodEmoji, formatTime } from '@/lib/ut
 import { fade, slideUp } from '@/lib/animations';
 
 export function SearchOverlay() {
+  const isOpen = useAppStore((s) => s.activeOverlay === 'search');
+
+  return (
+    <AnimatePresence>{isOpen && <SearchContent />}</AnimatePresence>
+  );
+}
+
+function SearchContent() {
   const {
-    activeOverlay,
     closeOverlay,
     searchHistory,
     addToHistory,
@@ -72,178 +79,174 @@ export function SearchOverlay() {
     );
   };
 
-  if (activeOverlay !== 'search') return null;
-
   return (
-    <AnimatePresence>
-      <motion.div
-        key="search-overlay"
-        className="fixed inset-0 bg-cream z-50 flex flex-col"
-        variants={fade}
-        initial="hidden"
-        animate="visible"
-        exit="exit"
-      >
-        {/* Header */}
-        <div className="p-4 border-b border-hairline bg-white">
-          <div className="flex items-center gap-3">
-            <div className="flex-1 flex items-center gap-3 bg-gray-100 rounded-full px-4 py-3">
-              <Search size={20} className="text-muted" />
-              <input
-                type="text"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Rechercher une recette..."
-                className="flex-1 bg-transparent text-[15px] text-ink placeholder:text-faint outline-none"
-                autoFocus
-              />
-              {query && (
-                <button onClick={() => setQuery('')}>
-                  <X size={18} className="text-muted" />
+    <motion.div
+      key="search-overlay"
+      className="fixed inset-0 bg-cream z-50 flex flex-col"
+      variants={fade}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+    >
+      {/* Header */}
+      <div className="p-4 border-b border-hairline bg-white">
+        <div className="flex items-center gap-3">
+          <div className="flex-1 flex items-center gap-3 bg-gray-100 rounded-full px-4 py-3">
+            <Search size={20} className="text-muted" />
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Rechercher une recette..."
+              className="flex-1 bg-transparent text-[15px] text-ink placeholder:text-faint outline-none"
+              autoFocus
+            />
+            {query && (
+              <button onClick={() => setQuery('')} aria-label="Effacer la recherche">
+                <X size={18} className="text-muted" />
+              </button>
+            )}
+          </div>
+          <button
+            onClick={closeOverlay}
+            className="text-[14px] font-semibold text-forest"
+          >
+            Fermer
+          </button>
+        </div>
+
+        {/* Mode toggle */}
+        <div className="flex gap-2 mt-4">
+          <button
+            onClick={() => setFridgeMode(false)}
+            className={`px-4 py-2 rounded-full text-[13px] font-semibold transition-colors ${
+              !fridgeMode ? 'bg-forest text-white' : 'bg-gray-100 text-ink'
+            }`}
+          >
+            🔍 Recherche
+          </button>
+          <button
+            onClick={() => setFridgeMode(true)}
+            className={`px-4 py-2 rounded-full text-[13px] font-semibold transition-colors ${
+              fridgeMode ? 'bg-forest text-white' : 'bg-gray-100 text-ink'
+            }`}
+          >
+            🧊 Je vide mon frigo
+          </button>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="flex-1 overflow-y-auto p-5">
+        {/* Fridge mode */}
+        {fridgeMode && (
+          <motion.div variants={slideUp} initial="hidden" animate="visible">
+            <p className="text-[13px] text-muted mb-3">
+              Sélectionne les ingrédients que tu as :
+            </p>
+            <div className="flex flex-wrap gap-2 mb-6">
+              {commonIngredients.map((ing) => (
+                <button
+                  key={ing}
+                  onClick={() => toggleFridgeIngredient(ing)}
+                  className={`px-3 py-1.5 rounded-full text-[13px] font-semibold transition-colors ${
+                    fridgeIngredients.includes(ing)
+                      ? 'bg-orange text-white'
+                      : 'bg-gray-100 text-ink'
+                  }`}
+                >
+                  {ing}
                 </button>
-              )}
+              ))}
             </div>
-            <button
-              onClick={closeOverlay}
-              className="text-[14px] font-semibold text-forest"
-            >
-              Fermer
-            </button>
-          </div>
+          </motion.div>
+        )}
 
-          {/* Mode toggle */}
-          <div className="flex gap-2 mt-4">
-            <button
-              onClick={() => setFridgeMode(false)}
-              className={`px-4 py-2 rounded-full text-[13px] font-semibold transition-colors ${
-                !fridgeMode ? 'bg-forest text-white' : 'bg-gray-100 text-ink'
-              }`}
-            >
-              🔍 Recherche
-            </button>
-            <button
-              onClick={() => setFridgeMode(true)}
-              className={`px-4 py-2 rounded-full text-[13px] font-semibold transition-colors ${
-                fridgeMode ? 'bg-forest text-white' : 'bg-gray-100 text-ink'
-              }`}
-            >
-              🧊 Je vide mon frigo
-            </button>
-          </div>
-        </div>
-
-        {/* Content */}
-        <div className="flex-1 overflow-y-auto p-5">
-          {/* Fridge mode */}
-          {fridgeMode && (
-            <motion.div variants={slideUp} initial="hidden" animate="visible">
-              <p className="text-[13px] text-muted mb-3">
-                Sélectionne les ingrédients que tu as :
-              </p>
-              <div className="flex flex-wrap gap-2 mb-6">
-                {commonIngredients.map((ing) => (
-                  <button
-                    key={ing}
-                    onClick={() => toggleFridgeIngredient(ing)}
-                    className={`px-3 py-1.5 rounded-full text-[13px] font-semibold transition-colors ${
-                      fridgeIngredients.includes(ing)
-                        ? 'bg-orange text-white'
-                        : 'bg-gray-100 text-ink'
-                    }`}
-                  >
-                    {ing}
-                  </button>
-                ))}
-              </div>
-            </motion.div>
-          )}
-
-          {/* Search history */}
-          {!fridgeMode && !query && searchHistory.length > 0 && (
-            <div className="mb-6">
-              <div className="flex items-center gap-2 mb-3">
-                <Clock size={16} className="text-muted" />
-                <span className="text-[12px] font-bold text-muted uppercase tracking-wider">
-                  Recherches récentes
-                </span>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {searchHistory.map((term) => (
-                  <button
-                    key={term}
-                    onClick={() => handleSearch(term)}
-                    className="px-4 py-2 bg-white border border-hairline rounded-full text-[13px] text-ink font-medium"
-                  >
-                    {term}
-                  </button>
-                ))}
-              </div>
+        {/* Search history */}
+        {!fridgeMode && !query && searchHistory.length > 0 && (
+          <div className="mb-6">
+            <div className="flex items-center gap-2 mb-3">
+              <Clock size={16} className="text-muted" />
+              <span className="text-[12px] font-bold text-muted uppercase tracking-wider">
+                Recherches récentes
+              </span>
             </div>
-          )}
+            <div className="flex flex-wrap gap-2">
+              {searchHistory.map((term) => (
+                <button
+                  key={term}
+                  onClick={() => handleSearch(term)}
+                  className="px-4 py-2 bg-white border border-hairline rounded-full text-[13px] text-ink font-medium"
+                >
+                  {term}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
-          {/* Surprise button */}
-          {!fridgeMode && !query && (
-            <button
-              onClick={handleSurprise}
-              className="w-full flex items-center justify-center gap-2 py-4 bg-warm-field border border-dashed border-orange rounded-[18px] text-orange-deep text-[14px] font-bold mb-6"
-            >
-              <Sparkles size={18} />
-              Surprends-moi !
-            </button>
-          )}
+        {/* Surprise button */}
+        {!fridgeMode && !query && (
+          <button
+            onClick={handleSurprise}
+            className="w-full flex items-center justify-center gap-2 py-4 bg-warm-field border border-dashed border-orange rounded-[18px] text-orange-deep text-[14px] font-bold mb-6"
+          >
+            <Sparkles size={18} />
+            Surprends-moi !
+          </button>
+        )}
 
-          {/* Results */}
-          {searchResults.length > 0 && (
-            <div>
-              <p className="text-[12px] font-bold text-muted uppercase tracking-wider mb-3">
-                {searchResults.length} résultat{searchResults.length > 1 ? 's' : ''}
-              </p>
-              <div className="space-y-3">
-                {searchResults.map((recipe) => {
-                  const accent = getAccentColor(recipe.id);
-                  return (
-                    <motion.button
-                      key={recipe.id}
-                      onClick={() => handleResultClick(recipe.id)}
-                      className="w-full flex items-center gap-3 bg-white border border-hairline rounded-[16px] p-3 text-left"
-                      whileTap={{ scale: 0.98 }}
+        {/* Results */}
+        {searchResults.length > 0 && (
+          <div>
+            <p className="text-[12px] font-bold text-muted uppercase tracking-wider mb-3">
+              {searchResults.length} résultat{searchResults.length > 1 ? 's' : ''}
+            </p>
+            <div className="space-y-3">
+              {searchResults.map((recipe) => {
+                const accent = getAccentColor(recipe.id);
+                return (
+                  <motion.button
+                    key={recipe.id}
+                    onClick={() => handleResultClick(recipe.id)}
+                    className="w-full flex items-center gap-3 bg-white border border-hairline rounded-[16px] p-3 text-left"
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <div
+                      className="w-14 h-14 rounded-[12px] flex items-center justify-center flex-shrink-0"
+                      style={{ background: `linear-gradient(145deg, ${accent}40, ${accent})` }}
                     >
-                      <div
-                        className="w-14 h-14 rounded-[12px] flex items-center justify-center flex-shrink-0"
-                        style={{ background: `linear-gradient(145deg, ${accent}40, ${accent})` }}
-                      >
-                        <span className="text-[28px]">{foodEmoji(recipe)}</span>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-playfair font-bold text-[15px] text-ink truncate">
-                          {recipe.title}
-                        </p>
-                        <p className="text-[12px] text-muted mt-0.5">
-                          ⏱ {formatTime(recipe.prepTime + recipe.cookTime)} · {recipe.difficulty}
-                        </p>
-                      </div>
-                    </motion.button>
-                  );
-                })}
-              </div>
+                      <span className="text-[28px]">{foodEmoji(recipe)}</span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-playfair font-bold text-[15px] text-ink truncate">
+                        {recipe.title}
+                      </p>
+                      <p className="text-[12px] text-muted mt-0.5">
+                        ⏱ {formatTime(recipe.prepTime + recipe.cookTime)} · {recipe.difficulty}
+                      </p>
+                    </div>
+                  </motion.button>
+                );
+              })}
             </div>
-          )}
+          </div>
+        )}
 
-          {/* No results */}
-          {((query && searchResults.length === 0) ||
-            (fridgeMode && fridgeIngredients.length > 0 && searchResults.length === 0)) && (
-            <div className="text-center py-12">
-              <div className="text-[46px] mb-3">🍳</div>
-              <p className="font-playfair text-[18px] text-ink">
-                Aucune recette trouvée
-              </p>
-              <p className="text-[13px] text-muted mt-2">
-                Essaie d&apos;autres mots-clés ou ingrédients.
-              </p>
-            </div>
-          )}
-        </div>
-      </motion.div>
-    </AnimatePresence>
+        {/* No results */}
+        {((query && searchResults.length === 0) ||
+          (fridgeMode && fridgeIngredients.length > 0 && searchResults.length === 0)) && (
+          <div className="text-center py-12">
+            <div className="text-[46px] mb-3">🍳</div>
+            <p className="font-playfair text-[18px] text-ink">
+              Aucune recette trouvée
+            </p>
+            <p className="text-[13px] text-muted mt-2">
+              Essaie d&apos;autres mots-clés ou ingrédients.
+            </p>
+          </div>
+        )}
+      </div>
+    </motion.div>
   );
 }

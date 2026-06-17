@@ -75,10 +75,8 @@ export function getDifficultyColor(difficulty: string): string {
   switch (difficulty) {
     case 'Très Facile':
     case 'Facile':
-    case 'Tres Facile':
       return 'var(--green-bright)';
     case 'Modérée':
-    case 'Moderee':
       return 'var(--difficulty-moderate)';
     default:
       return 'var(--difficulty-hard)';

@@ -1,10 +1,31 @@
 'use client';
 
+import { useState } from 'react';
 import { Minus, Plus } from 'lucide-react';
 import { useAppStore } from '@/stores/app-store';
 
 export default function PreferencesPage() {
-  const { favorites, cooked, defaultServings, setDefaultServings, resetAll } = useAppStore();
+  const {
+    favorites,
+    cooked,
+    defaultServings,
+    setDefaultServings,
+    dailyReminder,
+    setDailyReminder,
+    resetAll,
+  } = useAppStore();
+  const [confirmingReset, setConfirmingReset] = useState(false);
+
+  const toggleDailyReminder = () => {
+    const next = !dailyReminder;
+    setDailyReminder(next);
+    // Ask for OS notification permission the first time it's enabled.
+    if (next && typeof window !== 'undefined' && 'Notification' in window) {
+      if (Notification.permission === 'default') {
+        void Notification.requestPermission();
+      }
+    }
+  };
 
   return (
     <div className="px-5 pt-2 pb-6">
@@ -84,11 +105,24 @@ export default function PreferencesPage() {
         <div className="flex items-center justify-between p-4">
           <div>
             <p className="text-[14px] font-semibold text-ink">Recette du jour</p>
-            <p className="text-[12px] text-muted mt-0.5">Notification quotidienne</p>
+            <p className="text-[12px] text-muted mt-0.5">Rappel quotidien</p>
           </div>
-          <div className="w-12 h-7 bg-forest rounded-full relative shadow-sm">
-            <div className="absolute right-1 top-1 w-5 h-5 bg-white rounded-full" />
-          </div>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={dailyReminder}
+            aria-label="Activer le rappel quotidien"
+            onClick={toggleDailyReminder}
+            className={`w-12 h-7 rounded-full relative shadow-sm transition-colors ${
+              dailyReminder ? 'bg-forest' : 'bg-hairline'
+            }`}
+          >
+            <span
+              className={`absolute top-1 w-5 h-5 bg-white rounded-full transition-all ${
+                dailyReminder ? 'right-1' : 'left-1'
+              }`}
+            />
+          </button>
         </div>
       </div>
 
@@ -104,16 +138,37 @@ export default function PreferencesPage() {
       </div>
 
       {/* Reset */}
-      <button
-        onClick={() => {
-          if (confirm('Réinitialiser tous les favoris et la progression ?')) {
-            resetAll();
-          }
-        }}
-        className="w-full mt-6 py-3 rounded-[18px] border-2 border-danger text-danger text-[14px] font-semibold hover:bg-danger/5 transition-colors"
-      >
-        Réinitialiser favoris et progression
-      </button>
+      {confirmingReset ? (
+        <div className="mt-6 rounded-[18px] border-2 border-danger p-4">
+          <p className="text-[13px] font-semibold text-ink text-center">
+            Réinitialiser tous les favoris et la progression ?
+          </p>
+          <div className="flex gap-3 mt-3">
+            <button
+              onClick={() => setConfirmingReset(false)}
+              className="flex-1 py-2.5 rounded-full bg-gray-100 text-ink text-[14px] font-semibold"
+            >
+              Annuler
+            </button>
+            <button
+              onClick={() => {
+                resetAll();
+                setConfirmingReset(false);
+              }}
+              className="flex-1 py-2.5 rounded-full bg-danger text-white text-[14px] font-semibold"
+            >
+              Confirmer
+            </button>
+          </div>
+        </div>
+      ) : (
+        <button
+          onClick={() => setConfirmingReset(true)}
+          className="w-full mt-6 py-3 rounded-[18px] border-2 border-danger text-danger text-[14px] font-semibold hover:bg-danger/5 transition-colors"
+        >
+          Réinitialiser favoris et progression
+        </button>
+      )}
     </div>
   );
 }

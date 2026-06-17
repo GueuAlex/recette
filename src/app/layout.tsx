@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Lora, Inter } from 'next/font/google';
 import { BottomTabBar } from '@/components/layout/BottomTabBar';
 import { Overlays } from '@/components/layout/Overlays';
+import { ServiceWorkerRegister } from '@/components/pwa/ServiceWorkerRegister';
 import './globals.css';
 
 const lora = Lora({
@@ -18,16 +19,17 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'https://la-grande-table.example'),
   title: "La Grande Table d'Afrique de l'Ouest",
   description: '304 recettes ivoiriennes interactives',
-  manifest: '/manifest.json',
+  manifest: '/manifest.webmanifest',
 };
 
 export const viewport: Viewport = {
   themeColor: '#1C4D22',
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
+  // No maximumScale / userScalable: pinch-to-zoom must stay enabled (WCAG 1.4.4).
 };
 
 export default function RootLayout({
@@ -41,6 +43,7 @@ export default function RootLayout({
         {children}
         <Overlays />
         <BottomTabBar />
+        <ServiceWorkerRegister />
       </body>
     </html>
   );

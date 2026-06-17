@@ -6,7 +6,7 @@ import { SlidersHorizontal, X } from 'lucide-react';
 import { RecipeCard } from '@/components/recipe/RecipeCard';
 import { FilterSheet } from '@/components/filters/FilterSheet';
 import { ExplorerSkeleton } from '@/components/ui/LoadingSkeleton';
-import { RECIPES, CATEGORIES } from '@/lib/recipes';
+import { RECIPES, CATEGORIES, isRapid, totalTime } from '@/lib/recipes';
 
 interface Filters {
   category: string | null;
@@ -32,7 +32,7 @@ function ExplorerContent() {
 
     if (filters.category) {
       if (filters.category === 'recettes-rapides') {
-        result = result.filter((r) => r.prepTime + r.cookTime <= 30);
+        result = result.filter(isRapid);
       } else {
         result = result.filter((r) => r.category === filters.category);
       }
@@ -43,13 +43,13 @@ function ExplorerContent() {
     }
 
     if (filters.maxTime) {
-      result = result.filter((r) => r.prepTime + r.cookTime <= filters.maxTime!);
+      result = result.filter((r) => totalTime(r) <= filters.maxTime!);
     }
 
     if (filters.sort === 'alpha') {
       result.sort((a, b) => a.title.localeCompare(b.title, 'fr'));
     } else {
-      result.sort((a, b) => (a.prepTime + a.cookTime) - (b.prepTime + b.cookTime));
+      result.sort((a, b) => totalTime(a) - totalTime(b));
     }
 
     return result;

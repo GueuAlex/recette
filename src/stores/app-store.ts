@@ -2,7 +2,9 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 interface TimerState {
-  remaining: number;
+  // Absolute end timestamp (ms). Remaining time is derived from the wall
+  // clock so the countdown stays accurate even when the tab is backgrounded.
+  endsAt: number;
   total: number;
   label: string;
 }
@@ -13,6 +15,7 @@ interface AppState {
   cooked: string[];
   searchHistory: string[];
   defaultServings: number;
+  dailyReminder: boolean;
 
   // UI State
   activeOverlay: 'detail' | 'cooking' | 'search' | null;
@@ -37,6 +40,7 @@ interface AppState {
   markCooked: (id: string) => void;
   addToHistory: (term: string) => void;
   setDefaultServings: (n: number) => void;
+  setDailyReminder: (on: boolean) => void;
   openRecipe: (id: string) => void;
   closeOverlay: () => void;
   openSearch: () => void;
@@ -47,7 +51,6 @@ interface AppState {
   toggleStep: (recipeId: string, stepNo: number) => void;
   setServings: (recipeId: string, servings: number) => void;
   startTimer: (seconds: number, label: string) => void;
-  tickTimer: () => void;
   clearTimer: () => void;
   triggerConfetti: () => void;
   triggerSurprise: () => void;
@@ -66,6 +69,7 @@ export const useAppStore = create<AppState>()(
       cooked: [],
       searchHistory: [],
       defaultServings: 4,
+      dailyReminder: true,
       activeOverlay: null,
       currentRecipeId: null,
       cookingStep: 0,
@@ -99,6 +103,8 @@ export const useAppStore = create<AppState>()(
 
       setDefaultServings: (n) => set({ defaultServings: n }),
 
+      setDailyReminder: (on) => set({ dailyReminder: on }),
+
       openRecipe: (id) => set({ activeOverlay: 'detail', currentRecipeId: id }),
 
       closeOverlay: () => set({ activeOverlay: null, currentRecipeId: null, cookingStep: 0 }),
@@ -131,11 +137,8 @@ export const useAppStore = create<AppState>()(
         servingsOverride: { ...state.servingsOverride, [recipeId]: servings },
       })),
 
-      startTimer: (seconds, label) => set({ timer: { remaining: seconds, total: seconds, label } }),
-
-      tickTimer: () => set((state) => {
-        if (!state.timer || state.timer.remaining <= 0) return state;
-        return { timer: { ...state.timer, remaining: state.timer.remaining - 1 } };
+      startTimer: (seconds, label) => set({
+        timer: { endsAt: Date.now() + seconds * 1000, total: seconds, label },
       }),
 
       clearTimer: () => set({ timer: null }),
@@ -164,6 +167,7 @@ export const useAppStore = create<AppState>()(
         cooked: state.cooked,
         searchHistory: state.searchHistory,
         defaultServings: state.defaultServings,
+        dailyReminder: state.dailyReminder,
       }),
     }
   )

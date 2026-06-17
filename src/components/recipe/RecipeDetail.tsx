@@ -7,15 +7,26 @@ import { useAppStore } from '@/stores/app-store';
 import { getRecipeById, CATEGORIES } from '@/lib/recipes';
 import { getAccentColor, formatTime, foodEmoji, getDifficultyColor } from '@/lib/utils';
 import { sheetUp, fade } from '@/lib/animations';
+import type { Recipe } from '@/lib/types';
 import { IngredientList } from './IngredientList';
 import { StepList } from './StepList';
 
 type Tab = 'ingredients' | 'steps' | 'tip';
 
 export function RecipeDetail() {
+  const { activeOverlay, currentRecipeId } = useAppStore();
+  const recipe = currentRecipeId ? getRecipeById(currentRecipeId) : undefined;
+  const isOpen = activeOverlay === 'detail' && !!recipe;
+
+  return (
+    <AnimatePresence>
+      {isOpen && recipe && <RecipeDetailContent key={recipe.id} recipe={recipe} />}
+    </AnimatePresence>
+  );
+}
+
+function RecipeDetailContent({ recipe }: { recipe: Recipe }) {
   const {
-    activeOverlay,
-    currentRecipeId,
     closeOverlay,
     startCooking,
     favorites,
@@ -26,11 +37,6 @@ export function RecipeDetail() {
   } = useAppStore();
 
   const [activeTab, setActiveTab] = useState<Tab>('ingredients');
-
-  if (activeOverlay !== 'detail' || !currentRecipeId) return null;
-
-  const recipe = getRecipeById(currentRecipeId);
-  if (!recipe) return null;
 
   const isFavorite = favorites.includes(recipe.id);
   const accent = getAccentColor(recipe.id);
@@ -46,7 +52,7 @@ export function RecipeDetail() {
   ];
 
   return (
-    <AnimatePresence>
+    <>
       <motion.div
         key="recipe-detail-backdrop"
         className="fixed inset-0 bg-black/50 z-50"
@@ -73,6 +79,7 @@ export function RecipeDetail() {
           {/* Close button */}
           <button
             onClick={closeOverlay}
+            aria-label="Fermer"
             className="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/30 flex items-center justify-center z-10"
           >
             <X size={22} className="text-white" />
@@ -81,6 +88,8 @@ export function RecipeDetail() {
           {/* Favorite button */}
           <motion.button
             onClick={() => toggleFavorite(recipe.id)}
+            aria-label={isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris'}
+            aria-pressed={isFavorite}
             className="absolute top-4 left-4 w-10 h-10 rounded-full bg-white/90 flex items-center justify-center z-10"
             whileTap={{ scale: [1, 1.4, 0.9, 1] }}
           >
@@ -148,6 +157,7 @@ export function RecipeDetail() {
           <div className="flex items-center gap-4">
             <button
               onClick={() => setServings(recipe.id, Math.max(1, currentServings - 1))}
+              aria-label="Réduire les portions"
               className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm"
             >
               <Minus size={16} className="text-ink" />
@@ -157,6 +167,7 @@ export function RecipeDetail() {
             </span>
             <button
               onClick={() => setServings(recipe.id, Math.min(20, currentServings + 1))}
+              aria-label="Augmenter les portions"
               className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm"
             >
               <Plus size={16} className="text-ink" />
@@ -213,6 +224,6 @@ export function RecipeDetail() {
           </button>
         </div>
       </motion.div>
-    </AnimatePresence>
+    </>
   );
 }
