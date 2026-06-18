@@ -19,7 +19,7 @@ export interface Recipe {
   prepTime: number;
   cookTime: number;
   servings: number;
-  difficulty: 'Tres Facile' | 'Facile' | 'Moderee' | 'Modérée' | 'Très Facile';
+  difficulty: 'Très Facile' | 'Facile' | 'Modérée';
   ingredients: Ingredient[];
   steps: Step[];
   tip: string;

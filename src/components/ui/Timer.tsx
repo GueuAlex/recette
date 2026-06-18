@@ -1,38 +1,43 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { X } from 'lucide-react';
 import { useAppStore } from '@/stores/app-store';
 
 export function Timer() {
-  const { timer, tickTimer, clearTimer } = useAppStore();
+  const { timer, clearTimer } = useAppStore();
+  const [now, setNow] = useState(() => Date.now());
 
+  // Re-render once per second; remaining time is always derived from the
+  // wall clock, so the countdown can't drift even if a tick is missed.
+  // A rAF re-syncs `now` immediately when a new timer starts (without a
+  // synchronous setState in the effect body).
   useEffect(() => {
-    if (!timer || timer.remaining <= 0) return;
-
-    const interval = setInterval(() => {
-      tickTimer();
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [timer, tickTimer]);
-
-  useEffect(() => {
-    if (timer && timer.remaining === 0) {
-      // Vibrate if supported
-      if (navigator.vibrate) {
-        navigator.vibrate([200, 100, 200, 100, 200]);
-      }
-    }
+    if (!timer) return;
+    const tick = () => setNow(Date.now());
+    const raf = requestAnimationFrame(tick);
+    const interval = setInterval(tick, 1000);
+    return () => {
+      cancelAnimationFrame(raf);
+      clearInterval(interval);
+    };
   }, [timer]);
+
+  const remaining = timer ? Math.max(0, Math.round((timer.endsAt - now) / 1000)) : 0;
+  const isFinished = !!timer && remaining === 0;
+
+  useEffect(() => {
+    if (isFinished && navigator.vibrate) {
+      navigator.vibrate([200, 100, 200, 100, 200]);
+    }
+  }, [isFinished]);
 
   if (!timer) return null;
 
-  const progress = timer.remaining / timer.total;
-  const minutes = Math.floor(timer.remaining / 60);
-  const seconds = timer.remaining % 60;
-  const isFinished = timer.remaining === 0;
+  const progress = timer.total > 0 ? remaining / timer.total : 0;
+  const minutes = Math.floor(remaining / 60);
+  const seconds = remaining % 60;
 
   return (
     <motion.div

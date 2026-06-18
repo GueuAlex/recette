@@ -1,36 +1,59 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# La Grande Table d'Afrique de l'Ouest
 
-## Getting Started
+Application web (PWA) de **304 recettes ivoiriennes interactives**, tirées du livre
+_Secrets de Cuisine_ (Black Amani Studios). Pensée mobile-first : explorer,
+filtrer, mettre en favoris, ajuster les portions et cuisiner en mode pas-à-pas
+avec minuteurs.
 
-First, run the development server:
+## Stack
+
+- **Next.js 16** (App Router) + **React 19** + **TypeScript**
+- **Tailwind CSS v4** pour le style
+- **Zustand** (avec persistance `localStorage`) pour l'état applicatif
+- **Framer Motion** pour les animations / overlays
+- PWA installable (manifest + icônes)
+
+> ⚠️ Ce projet utilise Next.js 16, dont certaines API diffèrent des versions
+> antérieures. Avant de modifier le code lié au framework, consultez les guides
+> dans `node_modules/next/dist/docs/` (voir `AGENTS.md`).
+
+## Démarrage
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Ouvrir [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Commande        | Description                              |
+| --------------- | ---------------------------------------- |
+| `npm run dev`   | Serveur de développement                 |
+| `npm run build` | Build de production                      |
+| `npm run start` | Sert le build de production              |
+| `npm run lint`  | ESLint (échoue au moindre warning)       |
 
-## Learn More
+## Structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+src/
+  app/                 # Routes (App Router)
+    page.tsx           # Accueil
+    explorer/          # Catalogue + filtres
+    favoris/           # Recettes sauvegardées
+    preferences/       # Réglages utilisateur
+    recette/[id]/      # Page statique par recette (SEO / partage)
+    manifest.ts        # Manifest PWA
+    sitemap.ts         # Sitemap
+  components/          # UI (recipe, search, filters, layout, ui)
+  data/recipes.json    # Données des recettes
+  lib/                 # Données dérivées, types, utilitaires
+  stores/app-store.ts  # Store Zustand persisté
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Configuration
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `NEXT_PUBLIC_SITE_URL` : URL absolue du site, utilisée pour le sitemap et les
+  métadonnées Open Graph (défaut : `https://la-grande-table.example`).

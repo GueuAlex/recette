@@ -4,10 +4,13 @@ import Link from 'next/link';
 import { RecipeCard } from '@/components/recipe/RecipeCard';
 import { useAppStore } from '@/stores/app-store';
 import { getRecipeById } from '@/lib/recipes';
+import type { Recipe } from '@/lib/types';
 
 export default function FavorisPage() {
   const { favorites } = useAppStore();
-  const recipes = favorites.map(getRecipeById).filter(Boolean);
+  const recipes = favorites
+    .map(getRecipeById)
+    .filter((r): r is Recipe => r !== undefined);
 
   return (
     <div className="px-5 pt-2 pb-6">
@@ -23,7 +26,7 @@ export default function FavorisPage() {
       {recipes.length > 0 ? (
         <div className="grid grid-cols-2 gap-[13px] mt-4">
           {recipes.map((recipe) => (
-            <RecipeCard key={recipe!.id} recipe={recipe!} />
+            <RecipeCard key={recipe.id} recipe={recipe} />
           ))}
         </div>
       ) : (
